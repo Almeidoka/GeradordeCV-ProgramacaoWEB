@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded',()=>{
     verificarTema();
+    localizacao();
 })
 
 function verificarTema(){
@@ -13,7 +14,15 @@ function localizacao(){
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition
         (position=>{
-            console.log(position);
+            const lat = position.coords.latitude;
+            const long = position.coords.longitude;
+
+            fetch(`https://geocode.xyz/${lat},${long}?geoit=json`)
+                .then(response=>response.json())
+                .then(data=>{
+                    const localizacao = data.region || data.city || `${lat},${long}`;
+                    document.getElementById("localizacao").value=localizacao;
+                }).catch(error=> console.error("Alguma coisa de errado", error))
         })
     }
 }
